@@ -30,13 +30,16 @@ public class PessoaService {
 
     private final S3Template s3Template;
     private final DynamoDbTemplate dynamoDbTemplate;
+    private final DynamoDbEnhancedClient dynamoDbEnhancedClient;
 
     @Value("${app.s3.bucket-name}")
     private String bucketName;
 
-    public PessoaService(S3Template s3Template, DynamoDbTemplate dynamoDbTemplate) {
+    public PessoaService(S3Template s3Template, DynamoDbTemplate dynamoDbTemplate,
+                         DynamoDbEnhancedClient dynamoDbEnhancedClient) {
         this.s3Template = s3Template;
         this.dynamoDbTemplate = dynamoDbTemplate;
+        this.dynamoDbEnhancedClient = dynamoDbEnhancedClient;
     }
 
     public PessoaResponseDto cadastrarPessoa(PessoaRequestDto dto) {
@@ -97,9 +100,8 @@ public class PessoaService {
     }
 
     public List<Pessoa> listarTodas() {
-        DynamoDbEnhancedClient enhancedClient = DynamoDbEnhancedClient.builder().build();
         ScanEnhancedRequest request = ScanEnhancedRequest.builder().build();
-        DynamoDbTable<Pessoa> pessoaTable = enhancedClient.table("Pessoa", TableSchema.fromBean(Pessoa.class));
+        DynamoDbTable<Pessoa> pessoaTable = dynamoDbEnhancedClient.table("Pessoa", TableSchema.fromBean(Pessoa.class));
 
         PageIterable<Pessoa> results = pessoaTable.scan(request);
 
