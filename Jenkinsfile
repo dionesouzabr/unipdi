@@ -1,6 +1,6 @@
 pipeline {
   agent any
-  environment { AWS_REGION = 'sa-east-1' }
+  environment { AWS_REGION = 'us-east-2' }
 
   stages {
     stage('Checkout') {
